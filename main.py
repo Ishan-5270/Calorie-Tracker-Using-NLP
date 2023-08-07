@@ -1,13 +1,18 @@
 import requests
 from datetime import datetime as dt 
+from dotenv import load_dotenv
+import os 
 
 GENDER = "male"
 WEIGHT_KG = 75
 HEIGHT_CM = 177
 AGE = 20
 
-APPLICATION_ID = "78fd8809"
-API_KEY = "d3af93b3e39860bba3e2bd1100497b8d"
+load_dotenv()
+
+APPLICATION_ID = os.getenv("APPLICATION_ID")
+API_KEY = os.getenv("API_KEY")
+BEARER_TOKEN = os.getenv("BEARER_TOKEN")
 
 EXERCISE_URL = "https://trackapi.nutritionix.com/v2/natural/exercise"
 SHEET_URL = "https://api.sheety.co/ab0faa02bd1bfe5baf97a93bd0872a6d/calorieTrackingUsingNlp/workouts"
@@ -36,6 +41,10 @@ data = response.json()
 now_date = dt.now().strftime("%d/%m/%Y")
 now_time = dt.now().strftime("%X")
 
+headersAPI = {
+    "Authorization": f"Bearer {BEARER_TOKEN}"
+}
+
 
 for exercises in data["exercises"]:
     sheet_params = {
@@ -48,5 +57,5 @@ for exercises in data["exercises"]:
         }
     }
 
-    exercise_response = requests.post(url=SHEET_URL, json=sheet_params)
+    exercise_response = requests.post(url=SHEET_URL, json=sheet_params, headers=headersAPI)
     print(exercise_response.text)
